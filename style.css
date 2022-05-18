@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    font-family: 'Zen Dots', cursive;
     background-color: #012;
 }
 
@@ -9,6 +10,8 @@ body {
 }
 
 #root h1 {
+    margin: 0;
+    font-family: 'Bungee Shade', cursive;
     color: white;
 }
 

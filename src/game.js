@@ -1,13 +1,22 @@
 class Game {
+    static points = {
+        '1': 40,
+        '2': 100,
+        '3': 300,
+        '4': 1200
+    }
+
     score = 0;
-    lines = 0;
-    level = 0;
+    lines = 19;
 
     playfield = this.createPlayfield();
 
     activePiece = this.createPiece();
     nextPiece = this.createPiece();
 
+    get level() {
+        return Math.floor(this.lines * 0.1);
+    }
 
     getState() {
         const playfield = this.createPlayfield();
@@ -139,6 +148,8 @@ class Game {
         if (this.hasCollision()){
             this.activePiece.y -= 1;
             this.lockPiece();
+            const clearedLines = this.clearLines();
+            this.updateScore(clearedLines);
             this.updatePieces();
         }
     }
@@ -228,6 +239,51 @@ class Game {
                     this.playfield[pieceY + y][pieceX + x] = blocks[y][x];
                 }
             }
+        }
+    }
+
+    clearLines(){
+        const rows = 20;
+        const columns = 10;
+        let lines = [];
+
+
+        for (let y = rows - 1; y >= 0; y--) {
+            let numberOfBlocks = 0;
+
+            for (let x = 0; x < columns; x++) {
+                if(this.playfield[y][x]){
+                    numberOfBlocks += 1;
+                }
+            }
+
+            if(numberOfBlocks === 0) {
+                break;
+            } else if (numberOfBlocks < columns){
+                continue;
+            } else if (numberOfBlocks === columns){
+                lines.unshift(y);
+            }
+        }
+
+        //console.log(lines);
+
+        for(let index of lines){
+            // delete fill line
+            this.playfield.splice(index, 1);
+            // add empty line at top
+            this.playfield.unshift(new Array(columns).fill(0));
+        }
+
+        return lines.length;
+    }
+
+    updateScore(clearedLines){
+        //console.log(this.level)
+        if(clearedLines > 0){
+            this.score += Game.points[clearedLines] * (this.level + 1);
+            this.lines += clearedLines;
+            //console.log(this.score, this.lines, this.level);
         }
     }
 
